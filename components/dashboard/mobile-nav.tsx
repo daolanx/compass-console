@@ -7,9 +7,9 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
 const navItems = [
-  { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
-  { label: "Projects", icon: FolderKanban, href: "/dashboard/projects" },
-  { label: "Team", icon: Users, href: "/dashboard/team" },
+  { label: "Overview", icon: LayoutDashboard, href: "/overview" },
+  { label: "Projects", icon: FolderKanban, href: "/tasks" },
+  { label: "Team", icon: Users, href: "/members" },
 ]
 
 export function MobileNav() {

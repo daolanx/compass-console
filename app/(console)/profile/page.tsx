@@ -155,11 +155,11 @@ export default function ProfilePage() {
       <div className="max-w-6xl mx-auto p-4 sm:p-6 pb-24 md:pb-6">
         {/* Back */}
         <Link
-          href="/dashboard"
+          href="/overview"
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Dashboard
+          Back to Overview
         </Link>
 
         {/* GitHub-style layout */}

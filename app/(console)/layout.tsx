@@ -2,7 +2,7 @@ import { Sidebar } from "@/components/dashboard/sidebar"
 import { TopBar } from "@/components/dashboard/top-bar"
 import { MobileNav } from "@/components/dashboard/mobile-nav"
 
-export default function DashboardLayout({
+export default function ConsoleLayout({
   children,
 }: {
   children: React.ReactNode

@@ -4,9 +4,11 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   LayoutDashboard,
-  FolderKanban,
-  Users,
-  BarChart3,
+  Activity,
+  TrendingUp,
+  Wallet,
+  ClipboardList,
+  UserCog,
   Settings,
   ChevronsLeft,
   ChevronsRight,
@@ -25,14 +27,19 @@ import { User, LogOut } from "lucide-react"
 import { useState } from "react"
 
 const navItems = [
-  { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
-  { label: "Projects", icon: FolderKanban, href: "/dashboard/projects" },
-  { label: "Team Members", icon: Users, href: "/dashboard/team" },
-  { label: "Statistics", icon: BarChart3, href: "/dashboard/stats" },
-]
-
-const bottomItems = [
-  { label: "Settings", icon: Settings, href: "/dashboard/settings" },
+  [
+    { label: "Overview", icon: LayoutDashboard, href: "/overview" },
+    { label: "Tasks", icon: ClipboardList, href: "/tasks" },
+    { label: "Activities", icon: Activity, href: "/activities" },
+    { label: "Members", icon: UserCog, href: "/members" },
+  ],
+  [
+    { label: "Growth", icon: TrendingUp, href: "/growth" },
+    { label: "Finance", icon: Wallet, href: "/finance" },
+  ],
+  [
+    { label: "Settings", icon: Settings, href: "/settings" },
+  ],
 ]
 
 export function Sidebar() {
@@ -84,45 +91,39 @@ export function Sidebar() {
       </Button>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 transition-all cursor-pointer",
-                collapsed && "justify-center px-0",
-                isActive
-                  ? "bg-primary/10 text-primary font-semibold"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-            >
-              <item.icon className="w-5 h-5 flex-shrink-0" />
-              {!collapsed && <span className="text-sm">{item.label}</span>}
-            </Link>
-          )
-        })}
+      <nav className="flex-1 flex flex-col gap-1">
+        {navItems.map((group, groupIndex) => (
+          <div key={groupIndex}>
+            {!collapsed && (
+              <div className="my-2 border-t border-border" />
+            )}
+            <div className="space-y-1">
+              {group.map((item) => {
+                const isActive = pathname === item.href
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2 transition-all cursor-pointer",
+                      collapsed && "justify-center px-0",
+                      isActive
+                        ? "bg-primary/10 text-primary font-semibold"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )}
+                  >
+                    <item.icon className="w-5 h-5 flex-shrink-0" />
+                    {!collapsed && <span className="text-sm">{item.label}</span>}
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
-      {/* Bottom section */}
+      {/* User section */}
       <div className="mt-auto pt-4 border-t border-border space-y-1">
-        {bottomItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 transition-all text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer",
-              collapsed && "justify-center px-0"
-            )}
-          >
-            <item.icon className="w-5 h-5 flex-shrink-0" />
-            {!collapsed && <span className="text-sm">{item.label}</span>}
-          </Link>
-        ))}
-
-        {/* User */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div
@@ -145,7 +146,7 @@ export function Sidebar() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-48">
             <DropdownMenuItem asChild>
-              <Link href="/dashboard/profile" className="cursor-pointer">
+              <Link href="/profile" className="cursor-pointer">
                 <User className="w-4 h-4 mr-2" />
                 Profile
               </Link>

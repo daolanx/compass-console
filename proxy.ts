@@ -1,7 +1,13 @@
+import { NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/proxy";
 import { type NextRequest } from "next/server";
 
 export async function proxy(request: NextRequest) {
+  // Redirect root to overview
+  if (request.nextUrl.pathname === "/") {
+    return NextResponse.redirect(new URL("/overview", request.url));
+  }
+
   return await updateSession(request);
 }
 

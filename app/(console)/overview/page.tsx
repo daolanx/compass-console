@@ -5,7 +5,7 @@ import { TeamWorkloadChart } from "@/components/dashboard/team-workload-chart"
 import { RecentActivity } from "@/components/dashboard/recent-activity"
 import { TasksTable } from "@/components/dashboard/tasks-table"
 
-export default function DashboardPage() {
+export default function OverviewPage() {
   return (
     <>
       {/* AI Insights */}
