@@ -142,7 +142,7 @@ export function Sidebar() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-48">
             <DropdownMenuItem asChild>
-              <Link href="/protected/profile" className="cursor-pointer">
+              <Link href="/dashboard/profile" className="cursor-pointer">
                 <User className="w-4 h-4 mr-2" />
                 Profile
               </Link>
