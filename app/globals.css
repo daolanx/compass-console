@@ -29,6 +29,10 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    --dashboard-surface: 0 0% 100%;
+    --dashboard-surface-muted: 210 40% 98%;
+    --dashboard-primary-container: 226 100% 94%;
+    --dashboard-on-primary-container: 235 92% 34%;
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -55,6 +59,10 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --dashboard-surface: 222 47% 14%;
+    --dashboard-surface-muted: 217 33% 17%;
+    --dashboard-primary-container: 235 92% 34%;
+    --dashboard-on-primary-container: 226 100% 94%;
   }
 }
 

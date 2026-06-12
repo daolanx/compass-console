@@ -51,6 +51,12 @@ export default {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        dashboard: {
+          surface: "hsl(var(--dashboard-surface))",
+          "surface-muted": "hsl(var(--dashboard-surface-muted))",
+          "primary-container": "hsl(var(--dashboard-primary-container))",
+          "on-primary-container": "hsl(var(--dashboard-on-primary-container))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
