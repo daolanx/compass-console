@@ -10,7 +10,6 @@ import {
   Settings,
   ChevronsLeft,
   ChevronsRight,
-  Boxes,
   EllipsisVertical,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -50,15 +49,19 @@ export function Sidebar() {
       {/* Logo */}
       <div className={cn("px-2 mb-6", collapsed && "px-0")}>
         <div className={cn("flex items-center", collapsed ? "justify-center" : "gap-3")}>
-          <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center text-primary-foreground shadow-sm">
-            <Boxes className="w-5 h-5" />
+          <div className="w-9 h-9 ">
+            <img
+              src="/logo.webp"
+              alt="CollabSpace logo"
+              className="w-full h-full object-cover"
+            />
           </div>
           {!collapsed && (
-            <div>
-              <h1 className="text-lg font-bold text-foreground leading-tight">
-                CollabSpace
+            <div className="min-w-0">
+              <h1 className="text-[15px] font-semibold text-foreground tracking-tight leading-none mb-0.5">
+                Compass Console
               </h1>
-              <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+              <p className="text-[10px] font-medium text-muted-foreground/70 uppercase tracking-widest">
                 Workspace
               </p>
             </div>
