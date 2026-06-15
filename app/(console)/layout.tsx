@@ -13,7 +13,7 @@ export default function ConsoleLayout({
       <main className="flex-1 flex flex-col overflow-hidden">
         <TopBar />
         <div className="flex-1 overflow-y-auto p-6 pb-24 md:pb-6">
-          <div className="max-w-7xl mx-auto space-y-6">{children}</div>
+          <div className="space-y-6">{children}</div>
         </div>
       </main>
       <MobileNav />

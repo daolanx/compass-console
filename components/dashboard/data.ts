@@ -1,3 +1,70 @@
+export type MetricCardItem = {
+  label: string
+  value: string
+  trend: number | null
+  trendLabel: string
+}
+
+export const metricCards: MetricCardItem[] = [
+  {
+    label: "DAU",
+    value: "1,284",
+    trend: 12,
+    trendLabel: "+12%",
+  },
+  {
+    label: "MAU",
+    value: "8,432",
+    trend: null,
+    trendLabel: "Steady",
+  },
+  {
+    label: "New Signups",
+    value: "142",
+    trend: 15,
+    trendLabel: "+15%",
+  },
+  {
+    label: "Conversion Rate",
+    value: "3.2%",
+    trend: 1.2,
+    trendLabel: "+1.2%",
+  },
+]
+
+export type TaskProgressItem = {
+  name: string
+  count: number
+  color: string
+}
+
+export const taskProgressData = {
+  total: 12,
+  items: [
+    { name: "Overdue", count: 4, color: "bg-rose-500" },
+    { name: "In Progress", count: 3, color: "bg-orange-500" },
+    { name: "Review", count: 2, color: "bg-amber-500" },
+    { name: "Planned", count: 2, color: "bg-primary" },
+    { name: "Backlog", count: 1, color: "bg-muted-foreground/40" },
+  ],
+}
+
+export type TeamMemberItem = {
+  name: string
+  avatar: string
+  tasks: number
+  total: number
+  color: string
+}
+
+export const teamMembersData: TeamMemberItem[] = [
+  { name: "Sarah", avatar: "https://api.dicebear.com/9.x/notionists/svg?seed=Sarah", tasks: 3, total: 5, color: "bg-emerald-500" },
+  { name: "Jordan", avatar: "https://api.dicebear.com/9.x/notionists/svg?seed=Jordan", tasks: 5, total: 8, color: "bg-blue-500" },
+  { name: "Alex", avatar: "https://api.dicebear.com/9.x/notionists/svg?seed=Alex", tasks: 8, total: 12, color: "bg-amber-500" },
+  { name: "Mike", avatar: "https://api.dicebear.com/9.x/notionists/svg?seed=Mike", tasks: 4, total: 6, color: "bg-rose-500" },
+  { name: "Emily", avatar: "https://api.dicebear.com/9.x/notionists/svg?seed=Emily", tasks: 6, total: 10, color: "bg-violet-500" },
+]
+
 export const taskStatusData = {
   total: 128,
   completed: 52,
