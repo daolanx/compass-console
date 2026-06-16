@@ -1,9 +1,45 @@
 "use client"
 
+import { useState } from "react"
 import { CardTitle } from "@/components/ui/card"
 import { taskProgressData } from "./data"
+import {
+  ChartContainer,
+  type ChartConfig,
+} from "@/components/ui/chart"
+import { Cell, Pie, PieChart, Tooltip } from "recharts"
+
+const chartConfig = {
+  Overdue: { label: "Overdue", color: "hsl(0 84% 60%)" },
+  "In Progress": { label: "In Progress", color: "hsl(24 95% 53%)" },
+  Review: { label: "Review", color: "hsl(38 92% 50%)" },
+  Planned: { label: "Planned", color: "hsl(239 84% 67%)" },
+  Backlog: { label: "Backlog", color: "hsl(215 16% 47%)" },
+} satisfies ChartConfig
+
+const pieData = taskProgressData.items.map((item) => ({
+  name: item.name,
+  value: item.count,
+}))
 
 export function TaskProgress() {
+  const [hidden, setHidden] = useState<Set<string>>(new Set())
+
+  const toggle = (name: string) => {
+    setHidden((prev) => {
+      const next = new Set(prev)
+      if (next.has(name)) {
+        next.delete(name)
+      } else {
+        next.add(name)
+      }
+      return next
+    })
+  }
+
+  const visibleData = pieData.filter((d) => !hidden.has(d.name))
+  const visibleTotal = visibleData.reduce((acc, d) => acc + d.value, 0)
+
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
@@ -18,62 +54,65 @@ export function TaskProgress() {
 
       <div className="flex items-center gap-6">
         <div className="relative size-40 shrink-0">
-          <svg className="h-full w-full -rotate-90" viewBox="0 0 36 36">
-            <circle
-              cx="18"
-              cy="18"
-              fill="transparent"
-              r="15.915"
-              stroke="hsl(214 32% 91%)"
-              strokeWidth="3"
-            />
-            {taskProgressData.items.map((item, i) => {
-              const offset = taskProgressData.items
-                .slice(0, i)
-                .reduce((acc, curr) => acc + (curr.count / taskProgressData.total) * 100, 0)
-              return (
-                <circle
-                  key={item.name}
-                  cx="18"
-                  cy="18"
-                  fill="transparent"
-                  r="15.915"
-                  stroke={`var(--${item.name.toLowerCase().replace(/\s+/g, "-")}-color, ${getColor(item.color)})`}
-                  strokeWidth="3"
-                  strokeDasharray={`${(item.count / taskProgressData.total) * 100} ${100 - (item.count / taskProgressData.total) * 100}`}
-                  strokeDashoffset={`${-offset}`}
-                />
-              )
-            })}
-          </svg>
+          <ChartContainer config={chartConfig} className="h-full w-full">
+            <PieChart>
+              <Tooltip
+                formatter={(value, name) => [`${value}`, name]}
+                contentStyle={{
+                  backgroundColor: "hsl(var(--background))",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: "8px",
+                  fontSize: "12px",
+                }}
+              />
+              <Pie
+                data={visibleData}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={40}
+                outerRadius={60}
+                strokeWidth={0}
+                isAnimationActive={false}
+              >
+                {visibleData.map((entry) => (
+                  <Cell
+                    key={entry.name}
+                    fill={chartConfig[entry.name as keyof typeof chartConfig]?.color}
+                  />
+                ))}
+              </Pie>
+            </PieChart>
+          </ChartContainer>
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-            <span className="text-2xl font-bold text-foreground">{taskProgressData.total}</span>
+            <span className="text-2xl font-bold text-foreground">{visibleTotal}</span>
             <span className="text-[10px] font-bold uppercase text-muted-foreground">Active</span>
           </div>
         </div>
 
         <div className="flex flex-col gap-2">
-          {taskProgressData.items.map((item) => (
-            <div key={item.name} className="flex items-center gap-2">
-              <div className={`size-2 rounded-full ${item.color}`} />
-              <span className="text-xs text-muted-foreground">
-                {item.name} ({item.count})
-              </span>
-            </div>
-          ))}
+          {taskProgressData.items.map((item) => {
+            const isHidden = hidden.has(item.name)
+            const color = chartConfig[item.name as keyof typeof chartConfig]?.color
+            return (
+              <button
+                key={item.name}
+                onClick={() => toggle(item.name)}
+                className={`flex items-center gap-2 rounded-md px-2 py-1 text-left transition-opacity hover:bg-muted/50 ${
+                  isHidden ? "opacity-35" : "opacity-100"
+                }`}
+              >
+                <div
+                  className="size-2 rounded-full"
+                  style={{ backgroundColor: color }}
+                />
+                <span className="text-xs text-muted-foreground">
+                  {item.name} ({item.count})
+                </span>
+              </button>
+            )
+          })}
         </div>
       </div>
     </div>
   )
-}
-
-function getColor(tailwindClass: string): string {
-  const colorMap: Record<string, string> = {
-    "bg-rose-500": "hsl(0 84% 60%)",
-    "bg-orange-500": "hsl(24 95% 53%)",
-    "bg-amber-500": "hsl(38 92% 50%)",
-    "bg-primary": "hsl(239 84% 67%)",
-    "bg-muted-foreground/40": "hsl(215 16% 47%)",
-  }
-  return colorMap[tailwindClass] || "hsl(0 0% 50%)"
 }
