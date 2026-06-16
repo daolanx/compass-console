@@ -65,23 +65,6 @@ export const teamMembersData: TeamMemberItem[] = [
   { name: "Emily", avatar: "https://api.dicebear.com/9.x/notionists/svg?seed=Emily", tasks: 6, total: 10, color: "bg-violet-500" },
 ]
 
-export const taskStatusData = {
-  total: 128,
-  completed: 52,
-  inProgress: 38,
-  pending: 26,
-  overdue: 12,
-}
-
-export const teamWorkloadData = {
-  totalMembers: 12,
-  teams: [
-    { name: "Design Team", percentage: 88, color: "bg-primary" },
-    { name: "Dev Team", percentage: 42, color: "bg-chart-2" },
-    { name: "Marketing", percentage: 65, color: "bg-chart-3" },
-  ],
-}
-
 export type ActivityItem = {
   id: string
   user: string

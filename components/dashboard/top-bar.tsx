@@ -18,12 +18,9 @@ export function TopBar({ onToggleSidebar }: TopBarProps) {
         <PanelLeft />
       </Button>
       <div className="flex items-center gap-6">
-        <div className="relative w-full max-w-lg">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            className="pl-10 bg-muted/50"
-            placeholder="Search tasks, files or members..."
-          />
+        <div className="flex items-center gap-2 rounded-lg border bg-muted/50 px-3 py-2">
+          <Search className="size-4 shrink-0 text-muted-foreground" />
+          <Input className="h-auto border-0 bg-transparent p-0 shadow-none focus-visible:ring-0" placeholder="Search..." />
         </div>
         <Button variant="ghost" size="icon" className="relative text-muted-foreground">
           <Bell />
