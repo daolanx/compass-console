@@ -1,44 +1,41 @@
 "use client"
 
-import { TrendingUp, Minus } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, Info } from "lucide-react"
 import { metricCards, type MetricCardItem } from "./data"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
-import { Line, LineChart } from "recharts"
+import { Area, AreaChart } from "recharts"
 
-const sparklineData: Record<string, { value: number }[]> = {
-  DAU: [
-    { value: 980 }, { value: 1050 }, { value: 1100 }, { value: 1020 },
-    { value: 1150 }, { value: 1200 }, { value: 1180 }, { value: 1250 },
-    { value: 1284 },
-  ],
-  MAU: [
-    { value: 7200 }, { value: 7500 }, { value: 7800 }, { value: 8000 },
-    { value: 7900 }, { value: 8100 }, { value: 8300 }, { value: 8432 },
-  ],
-  "New Signups": [
-    { value: 95 }, { value: 110 }, { value: 105 }, { value: 120 },
-    { value: 130 }, { value: 125 }, { value: 138 }, { value: 142 },
-  ],
-  "Conversion Rate": [
-    { value: 2.1 }, { value: 2.3 }, { value: 2.5 }, { value: 2.8 },
-    { value: 2.6 }, { value: 2.9 }, { value: 3.0 }, { value: 3.2 },
-  ],
+const cardColors: Record<string, { stroke: string; fill: string }> = {
+  DAU: { stroke: "#22c55e", fill: "#22c55e" },
+  MRR: { stroke: "#6366f1", fill: "#6366f1" },
+  "New Signups": { stroke: "#f97316", fill: "#f97316" },
+  "Conversion Rate": { stroke: "#ec4899", fill: "#ec4899" },
 }
 
-function getChartConfig(trend: number | null): ChartConfig {
+function calcTrend(data: { value: number }[]): number | null {
+  if (data.length < 2) return null
+  const half = Math.floor(data.length / 2)
+  const recent = data.slice(half)
+  const prev = data.slice(0, half)
+  const recentAvg = recent.reduce((a, b) => a + b.value, 0) / recent.length
+  const prevAvg = prev.reduce((a, b) => a + b.value, 0) / prev.length
+  if (prevAvg === 0) return null
+  return ((recentAvg - prevAvg) / prevAvg) * 100
+}
+
+function getCompareLabel(compare: MetricCardItem["trendCompare"]): string {
+  return compare === "lastWeek" ? "vs last week" : "vs last month"
+}
+
+function getChartConfig(label: string): ChartConfig {
+  const color = cardColors[label]?.stroke ?? "hsl(215 16% 47%)"
   return {
-    value: {
-      label: "Value",
-      color: trend !== null
-        ? "hsl(var(--chart-2))"
-        : "hsl(var(--muted-foreground))",
-    },
+    value: { label: "Value", color },
   }
 }
 
@@ -53,50 +50,102 @@ export function MetricCards() {
 }
 
 function MetricCard({ card }: { card: MetricCardItem }) {
-  const chartConfig = getChartConfig(card.trend)
-  const data = sparklineData[card.label] ?? []
+  const chartConfig = getChartConfig(card.label)
+  const trend = calcTrend(card.data)
+  const colors = cardColors[card.label]
 
   return (
-    <Card>
-      <CardContent className="flex flex-col gap-2 p-4">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-muted-foreground">
-            {card.label}
-          </span>
-          {card.trend !== null ? (
-            <span className="flex items-center gap-0.5 text-xs font-semibold text-primary">
+    <Card className="py-2">
+      <CardHeader className="flex flex-row items-center justify-between p-3 pb-0">
+        <CardTitle className="text-sm font-bold text-muted-foreground">
+          {card.label}
+        </CardTitle>
+        {trend !== null ? (
+          <span
+            className={`flex items-center gap-0.5 text-xs font-semibold ${
+              trend > 0
+                ? "text-emerald-600 dark:text-emerald-400"
+                : trend < 0
+                  ? "text-rose-600 dark:text-rose-400"
+                  : "text-muted-foreground"
+            }`}
+          >
+            {trend > 0 ? (
               <TrendingUp className="h-3 w-3" />
-              {card.trendLabel}
-            </span>
-          ) : (
-            <span className="flex items-center gap-0.5 text-xs font-semibold text-muted-foreground">
+            ) : trend < 0 ? (
+              <TrendingDown className="h-3 w-3" />
+            ) : (
               <Minus className="h-3 w-3" />
-              {card.trendLabel}
+            )}
+            {trend > 0 ? "+" : ""}
+            {trend.toFixed(1)}%
+            <span className="relative group">
+              <Info className="h-3 w-3 cursor-help text-muted-foreground" />
+              <span className="pointer-events-none absolute -top-8 right-0 z-50 whitespace-nowrap rounded-md bg-foreground px-2 py-1 text-xs text-background opacity-0 shadow-md transition-opacity group-hover:opacity-100">
+                {getCompareLabel(card.trendCompare)}
+              </span>
             </span>
-          )}
-        </div>
-        <div className="text-2xl font-bold tracking-tight text-foreground">
+          </span>
+        ) : (
+          <span className="flex items-center gap-0.5 text-xs font-semibold text-muted-foreground">
+            <Minus className="h-3 w-3" />
+            —
+          </span>
+        )}
+      </CardHeader>
+      <CardContent className="flex flex-col gap-1 p-3 pt-0">
+        <div className="text-2xl font-medium tracking-tight text-foreground">
           {card.value}
         </div>
-        <ChartContainer config={chartConfig} className="h-10 w-full">
-          <LineChart
-            data={data}
+        <ChartContainer config={chartConfig} className="h-8 w-full">
+          <AreaChart
+            data={card.data}
             margin={{ top: 4, right: 0, left: 0, bottom: 0 }}
           >
+            <defs>
+              <linearGradient id={`fill-${card.label.replace(/\s+/g, "-")}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={colors.fill} stopOpacity={0.3} />
+                <stop offset="95%" stopColor={colors.fill} stopOpacity={0} />
+              </linearGradient>
+            </defs>
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel hideIndicator />}
+              content={
+                <SparklineTooltip label={card.label} />
+              }
             />
-            <Line
+            <Area
               type="monotone"
               dataKey="value"
-              stroke="var(--color-value)"
+              fill={`url(#fill-${card.label.replace(/\s+/g, "-")})`}
+              stroke={colors.stroke}
               strokeWidth={1.5}
               dot={false}
             />
-          </LineChart>
+          </AreaChart>
         </ChartContainer>
       </CardContent>
     </Card>
+  )
+}
+
+function SparklineTooltip({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean
+  payload?: Array<{ payload: { date: string; value: number } }>
+  label: string
+}) {
+  if (!active || !payload?.length) return null
+  const item = payload[0].payload
+  return (
+    <div className="rounded-lg border border-border bg-background px-4 py-3 text-xs shadow-xl">
+      <div className="font-medium text-foreground">{item.date}</div>
+      <div className="text-muted-foreground">
+        {label}: <span className="font-mono font-medium text-foreground">{item.value}</span>
+      </div>
+    </div>
   )
 }

@@ -27,10 +27,10 @@ export function AiInsights() {
   if (!visible) return null
 
   return (
-    <Card className="bg-muted/50 relative">
-      <CardContent className="flex items-start gap-4 p-4">
-        <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg text-primary">
-          <Sparkles />
+    <Card className="relative">
+      <CardContent className="flex items-start gap-4">
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg">
+          <Sparkles className="text-blue-500" />
         </div>
         <div className="flex-1 pr-16">
           <h3 className="mb-0.5 text-sm font-bold text-foreground">AI Insights</h3>

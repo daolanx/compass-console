@@ -1,8 +1,10 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { EllipsisVertical, User, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { createClient } from "@/lib/supabase/client"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -16,6 +18,15 @@ interface SidebarUserProps {
 }
 
 export function SidebarUser({ collapsed }: SidebarUserProps) {
+  const router = useRouter()
+  const supabase = createClient()
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push("/auth/login")
+    router.refresh()
+  }
+
   return (
     <div className="mx-2 py-2">
       <DropdownMenu>
@@ -47,11 +58,9 @@ export function SidebarUser({ collapsed }: SidebarUserProps) {
               Profile
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <button className="w-full cursor-pointer">
-              <LogOut className="mr-2" />
-              Logout
-            </button>
+          <DropdownMenuItem onClick={handleLogout}>
+            <LogOut className="mr-2" />
+            Logout
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

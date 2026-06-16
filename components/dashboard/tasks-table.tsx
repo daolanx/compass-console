@@ -1,4 +1,4 @@
-import { Filter, PersonStanding, ChevronDown, Plus } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -16,28 +16,11 @@ const inProgressTasks = tasks.filter((t) => t.status !== "Completed")
 export function TasksTable() {
   return (
     <Card>
-      <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <CardTitle className="text-xl">My Tasks</CardTitle>
-        <Button size="sm" className="gap-2 md:hidden">
-          <Plus />
-          New Task
+      <CardHeader className="flex flex-row items-center justify-between pb-0">
+        <CardTitle className="">Todo Tasks</CardTitle>
+        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+          <ArrowRight className="size-4" />
         </Button>
-        <div className="hidden flex-wrap items-center gap-3 md:flex">
-          <Button variant="outline" size="sm" className="gap-2">
-            <Filter />
-            Status: All
-            <ChevronDown />
-          </Button>
-          <Button variant="outline" size="sm" className="gap-2">
-            <PersonStanding />
-            Assignee: All
-            <ChevronDown />
-          </Button>
-          <Button size="sm" className="gap-2">
-            <Plus />
-            New Task
-          </Button>
-        </div>
       </CardHeader>
       <CardContent>
         {/* Mobile: Simple List */}
@@ -48,8 +31,8 @@ export function TasksTable() {
               className="flex items-center gap-3 rounded-lg border border-border p-3 transition-colors hover:bg-muted/30"
             >
               <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-medium text-foreground">{task.name}</div>
-                <div className="mt-0.5 text-xs text-muted-foreground">{task.category}</div>
+                <a href="#" className="truncate text-sm font-medium text-foreground hover:underline">{task.name}</a>
+                <a href="#" className="mt-0.5 block text-xs text-muted-foreground hover:text-primary">{task.category}</a>
               </div>
               <Badge
                 variant="outline"
@@ -86,15 +69,17 @@ export function TasksTable() {
                 <tr key={task.id} className="transition-colors hover:bg-muted/30">
                   <td className="px-4 py-4">
                     <div className="flex flex-col">
-                      <span className="font-semibold text-foreground">{task.name}</span>
-                      <span className="mt-0.5 text-xs text-muted-foreground">
+                      <a href="#" className="font-semibold text-foreground hover:underline">{task.name}</a>
+                      <a href="#" className="mt-0.5 text-xs text-muted-foreground hover:text-primary">
                         {task.category}
-                      </span>
+                      </a>
                     </div>
                   </td>
-         
+
                   <td className="px-4 py-4">
-                    <span className="text-sm text-muted-foreground">{task.milestone}</span>
+                    <a href="#" className="text-sm text-muted-foreground hover:text-primary hover:underline">
+                      {task.milestone}
+                    </a>
                   </td>
                            <td className="px-4 py-4">
                     <Badge

@@ -1,28 +1,20 @@
 import { AiInsights } from "@/components/dashboard/ai-insights"
 import { MetricCards } from "@/components/dashboard/metric-cards"
-import { SidebarStats } from "@/components/dashboard/sidebar-stats"
+import { TaskProgress } from "@/components/dashboard/task-progress"
 import { RecentActivity } from "@/components/dashboard/recent-activity"
 import { TasksTable } from "@/components/dashboard/tasks-table"
 
 export default function OverviewPage() {
   return (
     <>
-      {/* AI Insights */}
       <AiInsights />
-
-      {/* Metric Cards */}
       <MetricCards />
-
-      {/* Desktop: Two Column Layout */}
       <div className="hidden md:grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Tasks */}
         <div className="lg:col-span-8">
           <TasksTable />
         </div>
-
-        {/* Right Column: Sidebar Stats + Recent Activity */}
         <div className="lg:col-span-4 flex flex-col gap-6">
-          <SidebarStats />
+          <TaskProgress />
           <RecentActivity />
         </div>
       </div>

@@ -1,34 +1,65 @@
 export type MetricCardItem = {
   label: string
   value: string
-  trend: number | null
-  trendLabel: string
+  trendCompare: "lastWeek" | "lastMonth"
+  data: { date: string; value: number }[]
 }
 
 export const metricCards: MetricCardItem[] = [
   {
     label: "DAU",
     value: "1,284",
-    trend: 12,
-    trendLabel: "+12%",
+    trendCompare: "lastWeek",
+    data: [
+      { date: "Jun 10", value: 1120 },
+      { date: "Jun 11", value: 1050 },
+      { date: "Jun 12", value: 1180 },
+      { date: "Jun 13", value: 1100 },
+      { date: "Jun 14", value: 1220 },
+      { date: "Jun 15", value: 1250 },
+      { date: "Jun 16", value: 1284 },
+    ],
   },
   {
-    label: "MAU",
-    value: "8,432",
-    trend: null,
-    trendLabel: "Steady",
+    label: "MRR",
+    value: "$8,432",
+    trendCompare: "lastMonth",
+    data: [
+      { date: "Jan", value: 6200 },
+      { date: "Feb", value: 6800 },
+      { date: "Mar", value: 7100 },
+      { date: "Apr", value: 7500 },
+      { date: "May", value: 7900 },
+      { date: "Jun", value: 8432 },
+    ],
   },
   {
     label: "New Signups",
     value: "142",
-    trend: 15,
-    trendLabel: "+15%",
+    trendCompare: "lastWeek",
+    data: [
+      { date: "Jun 10", value: 110 },
+      { date: "Jun 11", value: 95 },
+      { date: "Jun 12", value: 125 },
+      { date: "Jun 13", value: 130 },
+      { date: "Jun 14", value: 118 },
+      { date: "Jun 15", value: 135 },
+      { date: "Jun 16", value: 142 },
+    ],
   },
   {
     label: "Conversion Rate",
     value: "3.2%",
-    trend: 1.2,
-    trendLabel: "+1.2%",
+    trendCompare: "lastWeek",
+    data: [
+      { date: "Jun 10", value: 2.8 },
+      { date: "Jun 11", value: 2.6 },
+      { date: "Jun 12", value: 2.9 },
+      { date: "Jun 13", value: 3.0 },
+      { date: "Jun 14", value: 2.7 },
+      { date: "Jun 15", value: 3.1 },
+      { date: "Jun 16", value: 3.2 },
+    ],
   },
 ]
 
@@ -72,7 +103,6 @@ export type ActivityItem = {
   action: string
   target: string
   time: string
-  quote?: string
 }
 
 export const recentActivities: ActivityItem[] = [
@@ -91,7 +121,6 @@ export const recentActivities: ActivityItem[] = [
     action: "commented on",
     target: "Q4 Plan",
     time: "15 mins ago",
-    quote: '"I think the color scheme needs..."',
   },
   {
     id: "3",

@@ -294,12 +294,11 @@ export default function ProfilePage() {
 
             {/* Recent Activity */}
             <Card className="border-border shadow-sm">
-              <CardHeader className="pb-2">
+              <CardHeader >
                 <CardTitle className="text-base font-semibold">Recent Activity</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {[
+              <CardContent >
+                 {[
                     { action: "Completed", target: "Homepage UI", time: "2 hours ago", icon: CheckCircle2, color: "text-emerald-500" },
                     { action: "Commented on", target: "Q4 Roadmap", time: "5 hours ago", icon: Activity, color: "text-primary" },
                     { action: "Created", target: "Market Research", time: "1 day ago", icon: FolderKanban, color: "text-chart-2" },
@@ -318,7 +317,6 @@ export default function ProfilePage() {
                       </div>
                     </div>
                   ))}
-                </div>
               </CardContent>
             </Card>
           </div>
