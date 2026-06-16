@@ -2,46 +2,46 @@
 
 import { TrendingUp, Minus } from "lucide-react"
 import { metricCards } from "./data"
+import { Card, CardContent } from "@/components/ui/card"
 
 export function MetricCards() {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {metricCards.map((card) => (
-        <div
-          key={card.label}
-          className="bg-card border border-border rounded-xl p-4 shadow-sm flex flex-col justify-between"
-        >
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              {card.label}
-            </span>
-            {card.trend !== null ? (
-              <span className="text-xs font-bold text-emerald-600 flex items-center gap-0.5">
-                <TrendingUp className="w-3.5 h-3.5" />
-                {card.trendLabel}
+        <Card key={card.label}>
+          <CardContent className="flex flex-col justify-between p-4">
+            <div className="mb-1 flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                {card.label}
               </span>
-            ) : (
-              <span className="text-xs font-bold text-muted-foreground flex items-center gap-0.5">
-                <Minus className="w-3.5 h-3.5" />
-                {card.trendLabel}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold text-foreground">{card.value}</div>
-            <div className="w-20 h-10">
-              <svg className="w-full h-full" viewBox="0 0 80 40">
-                <path
-                  d={getTrendPath(card.trend)}
-                  fill="none"
-                  stroke={card.trend !== null ? "hsl(160 84% 39%)" : "hsl(215 16% 47%)"}
-                  strokeLinecap="round"
-                  strokeWidth="2.5"
-                />
-              </svg>
+              {card.trend !== null ? (
+                <span className="flex items-center gap-0.5 text-xs font-bold text-primary">
+                  <TrendingUp />
+                  {card.trendLabel}
+                </span>
+              ) : (
+                <span className="flex items-center gap-0.5 text-xs font-bold text-muted-foreground">
+                  <Minus />
+                  {card.trendLabel}
+                </span>
+              )}
             </div>
-          </div>
-        </div>
+            <div className="flex items-center justify-between">
+              <div className="text-2xl font-bold text-foreground">{card.value}</div>
+              <div className="h-10 w-20">
+                <svg className="h-full w-full" viewBox="0 0 80 40">
+                  <path
+                    d={getTrendPath(card.trend)}
+                    fill="none"
+                    stroke={card.trend !== null ? "hsl(160 84% 39%)" : "hsl(215 16% 47%)"}
+                    strokeLinecap="round"
+                    strokeWidth="2.5"
+                  />
+                </svg>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       ))}
     </div>
   )

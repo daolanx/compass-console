@@ -21,7 +21,7 @@ export default function OverviewPage() {
         </div>
 
         {/* Right Column: Sidebar Stats + Recent Activity */}
-        <div className="lg:col-span-4 space-y-6">
+        <div className="lg:col-span-4 flex flex-col gap-6">
           <SidebarStats />
           <RecentActivity />
         </div>

@@ -2,6 +2,8 @@
 
 import { Sparkles, X, RefreshCw } from "lucide-react"
 import { useState } from "react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 
 const insights = [
   "Team load is at 85%. Consider reassigning tasks from Sarah to Alex to optimize velocity and ensure project deadlines are met.",
@@ -25,30 +27,36 @@ export function AiInsights() {
   if (!visible) return null
 
   return (
-    <div className="bg-muted/50 text-foreground p-4 rounded-xl shadow-sm flex items-start gap-4 border border-border relative">
-      <div className="bg-primary/10 p-2 rounded-lg flex items-center justify-center text-primary">
-        <Sparkles className="w-5 h-5" />
-      </div>
-      <div className="flex-1 pr-16">
-        <h3 className="text-sm font-bold mb-0.5 text-foreground">AI Insights</h3>
-        <p className="text-sm text-muted-foreground">{text}</p>
-      </div>
-      <div className="absolute top-2 right-2 flex items-center gap-1">
-        <button
-          onClick={handleRefresh}
-          disabled={loading}
-          className="p-1 text-muted-foreground hover:text-primary transition-colors disabled:opacity-50"
-          title="Refresh insights"
-        >
-          <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-        </button>
-        <button
-          onClick={() => setVisible(false)}
-          className="p-1 text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      </div>
-    </div>
+    <Card className="bg-muted/50 relative">
+      <CardContent className="flex items-start gap-4 p-4">
+        <div className="bg-primary/10 flex size-9 shrink-0 items-center justify-center rounded-lg text-primary">
+          <Sparkles />
+        </div>
+        <div className="flex-1 pr-16">
+          <h3 className="mb-0.5 text-sm font-bold text-foreground">AI Insights</h3>
+          <p className="text-sm text-muted-foreground">{text}</p>
+        </div>
+        <div className="absolute right-2 top-2 flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-7 text-muted-foreground hover:text-primary"
+            onClick={handleRefresh}
+            disabled={loading}
+            title="Refresh insights"
+          >
+            <RefreshCw className={loading ? "animate-spin" : ""} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-7 text-muted-foreground hover:text-foreground"
+            onClick={() => setVisible(false)}
+          >
+            <X />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   )
 }

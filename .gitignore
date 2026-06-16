@@ -38,6 +38,7 @@ yarn-error.log*
 .vercel
 
 # IDE / tooling
+.agents/
 .claude/
 .mimocode/
 
