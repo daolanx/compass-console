@@ -1,20 +1,17 @@
 import { Filter, PersonStanding, ChevronDown, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { tasks } from "./data"
+import { tasks, type Priority } from "./data"
 
-const statusStyles: Record<string, string> = {
-  Completed:
-    "bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-600/20 dark:bg-emerald-950 dark:text-emerald-400",
-  "In Progress":
-    "bg-primary/10 text-primary ring-1 ring-inset ring-primary/20",
-  Pending:
-    "bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-950 dark:text-amber-400",
-  Overdue:
-    "bg-rose-50 text-rose-700 ring-1 ring-inset ring-rose-600/20 dark:bg-rose-950 dark:text-rose-400",
+const priorityStyles: Record<Priority, string> = {
+  Urgent: "bg-rose-50 text-rose-700 ring-1 ring-inset ring-rose-600/20 dark:bg-rose-950 dark:text-rose-400",
+  High: "bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-950 dark:text-amber-400",
+  Medium: "bg-primary/10 text-primary ring-1 ring-inset ring-primary/20",
+  Low: "bg-muted text-muted-foreground ring-1 ring-inset ring-border",
 }
+
+const inProgressTasks = tasks.filter((t) => t.status !== "Completed")
 
 export function TasksTable() {
   return (
@@ -45,7 +42,7 @@ export function TasksTable() {
       <CardContent>
         {/* Mobile: Simple List */}
         <div className="flex flex-col gap-3 md:hidden">
-          {tasks.filter(t => t.status !== "Completed").map((task) => (
+          {inProgressTasks.map((task) => (
             <div
               key={task.id}
               className="flex items-center gap-3 rounded-lg border border-border p-3 transition-colors hover:bg-muted/30"
@@ -56,9 +53,9 @@ export function TasksTable() {
               </div>
               <Badge
                 variant="outline"
-                className={`${statusStyles[task.status]} shrink-0 border-0 text-[10px] font-bold uppercase tracking-tight`}
+                className={`${priorityStyles[task.priority]} shrink-0 border-0 text-[10px] font-bold uppercase tracking-tight`}
               >
-                {task.status}
+                {task.priority}
               </Badge>
             </div>
           ))}
@@ -72,25 +69,20 @@ export function TasksTable() {
                 <th className="px-4 pb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Task Name
                 </th>
-                <th className="px-4 pb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Status
+                 <th className="px-4 pb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                  Milestone
                 </th>
                 <th className="px-4 pb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Created Date
+                  Priority
                 </th>
+               
                 <th className="px-4 pb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Duration
-                </th>
-                <th className="px-4 pb-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Assignees
-                </th>
-                <th className="px-4 pb-3 text-right text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Action
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {tasks.map((task) => (
+              {inProgressTasks.map((task) => (
                 <tr key={task.id} className="transition-colors hover:bg-muted/30">
                   <td className="px-4 py-4">
                     <div className="flex flex-col">
@@ -100,37 +92,20 @@ export function TasksTable() {
                       </span>
                     </div>
                   </td>
+         
                   <td className="px-4 py-4">
+                    <span className="text-sm text-muted-foreground">{task.milestone}</span>
+                  </td>
+                           <td className="px-4 py-4">
                     <Badge
                       variant="outline"
-                      className={`${statusStyles[task.status]} border-0 text-[11px] font-bold uppercase tracking-tight`}
+                      className={`${priorityStyles[task.priority]} border-0 text-[11px] font-bold uppercase tracking-tight`}
                     >
-                      {task.status}
+                      {task.priority}
                     </Badge>
                   </td>
                   <td className="px-4 py-4">
-                    <span className="text-sm text-muted-foreground">{task.createdDate}</span>
-                  </td>
-                  <td className="px-4 py-4">
                     <span className="text-sm text-muted-foreground">{task.duration}</span>
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="flex -space-x-1.5">
-                      {task.assignees.map((assignee) => (
-                        <Avatar
-                          key={assignee.name}
-                          className="size-7 border-2 border-card ring-1 ring-muted"
-                        >
-                          <AvatarImage src={assignee.avatar} />
-                          <AvatarFallback>{assignee.name[0]}</AvatarFallback>
-                        </Avatar>
-                      ))}
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 text-right">
-                    <Button variant="ghost" size="sm" className="text-sm font-bold text-primary hover:text-primary/80">
-                      Details
-                    </Button>
                   </td>
                 </tr>
               ))}

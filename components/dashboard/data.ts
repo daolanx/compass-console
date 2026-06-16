@@ -111,11 +111,15 @@ export const recentActivities: ActivityItem[] = [
   },
 ]
 
+export type Priority = "Urgent" | "High" | "Medium" | "Low"
+
 export type TaskItem = {
   id: string
   name: string
   category: string
   status: "Completed" | "In Progress" | "Pending" | "Overdue"
+  priority: Priority
+  milestone: string
   createdDate: string
   duration: string
   assignees: { name: string; avatar: string }[]
@@ -127,6 +131,8 @@ export const tasks: TaskItem[] = [
     name: "Update Mobile Login Interface",
     category: "Product Design",
     status: "Pending",
+    priority: "High",
+    milestone: "Q3 Release",
     createdDate: "Oct 12, 2023",
     duration: "4 days",
     assignees: [
@@ -139,6 +145,8 @@ export const tasks: TaskItem[] = [
     name: "API Interface Performance Optimization",
     category: "Development",
     status: "In Progress",
+    priority: "Urgent",
+    milestone: "Q3 Release",
     createdDate: "Oct 10, 2023",
     duration: "1 week",
     assignees: [
@@ -150,6 +158,8 @@ export const tasks: TaskItem[] = [
     name: "Bug Fix: Payment Callback Exception",
     category: "Maintenance",
     status: "Completed",
+    priority: "Urgent",
+    milestone: "Q3 Hotfix",
     createdDate: "Oct 08, 2023",
     duration: "2 days",
     assignees: [
@@ -161,6 +171,8 @@ export const tasks: TaskItem[] = [
     name: "Brand Guidelines Revision",
     category: "Design System",
     status: "Completed",
+    priority: "Medium",
+    milestone: "Q4 Planning",
     createdDate: "Oct 24, 2023",
     duration: "12h spent",
     assignees: [
@@ -173,6 +185,8 @@ export const tasks: TaskItem[] = [
     name: "API Integration Auth",
     category: "Development",
     status: "In Progress",
+    priority: "High",
+    milestone: "Q3 Release",
     createdDate: "Oct 26, 2023",
     duration: "4.5h spent",
     assignees: [
@@ -184,6 +198,8 @@ export const tasks: TaskItem[] = [
     name: "Final UI Quality Check",
     category: "QA",
     status: "Pending",
+    priority: "Low",
+    milestone: "Q3 Release",
     createdDate: "Oct 29, 2023",
     duration: "-",
     assignees: [
