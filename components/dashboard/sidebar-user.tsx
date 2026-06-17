@@ -1,11 +1,13 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { EllipsisVertical, User, LogOut } from "lucide-react"
+import { EllipsisVertical, User, LogOut, UserCircle } from "lucide-react"
+import { User as SupabaseUser } from "@supabase/supabase-js"
 import { cn } from "@/lib/utils"
 import { createClient } from "@/lib/supabase/client"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { UserAvatar } from "@/components/user-avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,39 +21,66 @@ interface SidebarUserProps {
 
 export function SidebarUser({ collapsed }: SidebarUserProps) {
   const router = useRouter()
-  const supabase = createClient()
+  const [user, setUser] = useState<SupabaseUser | null>(null)
+  console.log('[user]', user);
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => setUser(user))
+  }, [])
 
   const handleLogout = async () => {
+    const supabase = createClient()
     await supabase.auth.signOut()
     router.push("/auth/login")
     router.refresh()
   }
+
+  const displayName =
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.display_name ||
+    user?.email ||
+    "User"
+
+  const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null
+  const avatarPath = user?.user_metadata?.avatar_path || null
 
   return (
     <div className="mx-2 py-2">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
-            title={collapsed ? "Mr. Chen" : undefined}
+            title={collapsed ? displayName : undefined}
             className={cn(
               "flex w-full items-center rounded-lg py-2 text-left text-muted-foreground transition-all hover:bg-muted hover:text-foreground",
               collapsed ? "justify-center px-0 gap-0" : "gap-3 px-3"
             )}
           >
-            <Avatar className="size-8 shrink-0">
-              <AvatarImage src="https://api.dicebear.com/9.x/notionists/svg?seed=Chen" />
-              <AvatarFallback>C</AvatarFallback>
-            </Avatar>
+            {user ? (
+              avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt={displayName}
+                  className="size-8 shrink-0 rounded-full object-cover"
+                />
+              ) : (
+                <UserAvatar user={user} avatarPath={avatarPath} size="sm" className="size-8" />
+              )
+            ) : (
+              <div className="size-8 shrink-0 rounded-full bg-muted flex items-center justify-center">
+                <UserCircle className="size-5 text-muted-foreground" />
+              </div>
+            )}
             <div className={cn("min-w-0 flex-1 overflow-hidden transition-all duration-300", collapsed ? "w-0 flex-none" : "w-auto")}>
               <div className="leading-tight whitespace-nowrap">
-                <div className="text-sm font-medium text-foreground">Mr. Chen</div>
-                <div className="text-xs text-muted-foreground">Admin</div>
+                <div className="text-sm font-medium text-foreground">{displayName}</div>
+                <div className="text-xs text-muted-foreground">{user?.email || ""}</div>
               </div>
             </div>
             <EllipsisVertical className={cn("size-4 shrink-0 text-muted-foreground/60 transition-all duration-300", collapsed ? "w-0 overflow-hidden" : "")} />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-48">
+        <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuItem asChild>
             <Link href="/profile" className="cursor-pointer">
               <User className="mr-2" />
