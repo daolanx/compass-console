@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useUser } from "@/lib/hooks/use-user"
+import { useUser } from "@/features/user/hooks/use-user"
 import { ProfileForm } from "@/components/profile-form"
 import { AvatarUpload } from "@/components/avatar-upload"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"

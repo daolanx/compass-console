@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { EllipsisVertical, User, LogOut, UserCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { createClient } from "@/lib/supabase/client"
-import { useUser } from "@/lib/hooks/use-user"
+import { useUser } from "@/features/user/hooks/use-user"
 import { UserAvatar } from "@/components/user-avatar"
 import {
   DropdownMenu,

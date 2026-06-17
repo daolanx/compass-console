@@ -2,43 +2,35 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { User } from "@supabase/supabase-js"
-import { createClient } from "@/lib/supabase/client"
+import { getCurrentUser, updateUser as updateUserService } from "../services"
+import { UpdateUserData } from "../types"
 
 const USER_QUERY_KEY = ["user"]
 
 export function useUser() {
   const queryClient = useQueryClient()
-  const supabase = createClient()
 
   const query = useQuery({
     queryKey: USER_QUERY_KEY,
     queryFn: async () => {
-      const { data: { user }, error } = await supabase.auth.getUser()
-      if (error) throw error
-      return user
+      const response = await getCurrentUser()
+      if (!response.success) throw new Error(response.message)
+      return response.data
     },
     staleTime: 5 * 60 * 1000,
     retry: 1,
   })
 
   const update = useMutation({
-    mutationFn: async (data: {
-      full_name?: string
-      display_name?: string
-      avatar_path?: string
-    }) => {
-      const { error } = await supabase.auth.updateUser({ data })
-      if (error) throw error
-      return data
+    mutationFn: async (data: UpdateUserData) => {
+      const response = await updateUserService(data)
+      if (!response.success) throw new Error(response.message)
+      return response
     },
     onMutate: async (newData) => {
-      // Cancel ongoing queries to avoid overwriting optimistic update
       await queryClient.cancelQueries({ queryKey: USER_QUERY_KEY })
-
-      // Save current data for rollback
       const previousUser = queryClient.getQueryData<User>(USER_QUERY_KEY)
 
-      // Optimistically update cache
       queryClient.setQueryData<User>(USER_QUERY_KEY, (old) => {
         if (!old) return old
         return {
@@ -53,13 +45,11 @@ export function useUser() {
       return { previousUser }
     },
     onError: (_err, _newData, context) => {
-      // Rollback to previous data on error
       if (context?.previousUser) {
         queryClient.setQueryData(USER_QUERY_KEY, context.previousUser)
       }
     },
     onSettled: () => {
-      // Refetch latest data to ensure consistency
       queryClient.invalidateQueries({ queryKey: USER_QUERY_KEY })
     },
   })
