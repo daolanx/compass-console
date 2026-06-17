@@ -68,8 +68,6 @@ export default function ProfilePage() {
         ? "Google"
         : "Email"
 
-  const avatarPath = user.user_metadata?.avatar_path || null
-
   return (
     <div className="flex-1 w-full">
       <div className="max-w-4xl mx-auto p-4 sm:p-6">
@@ -88,7 +86,6 @@ export default function ProfilePage() {
             <div className="rounded-full border-4 border-background shadow-lg overflow-hidden">
               <AvatarUpload
                 user={user}
-                avatarPath={avatarPath}
                 onUpload={handleAvatarChange}
               />
             </div>

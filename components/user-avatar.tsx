@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { User as UserIcon } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 
 interface UserAvatarProps {
   user: SupabaseUser;
-  avatarPath?: string | null;
   updatedAt?: string | null;
   size?: "sm" | "md" | "lg";
   className?: string;
@@ -40,7 +38,7 @@ function InitialsFallback({
   );
 }
 
-export function UserAvatar({ user, avatarPath, updatedAt, size = "md", className }: UserAvatarProps) {
+export function UserAvatar({ user, updatedAt, size = "md", className }: UserAvatarProps) {
   const [imgError, setImgError] = useState(false);
 
   const displayName =
@@ -49,10 +47,7 @@ export function UserAvatar({ user, avatarPath, updatedAt, size = "md", className
     user.email ||
     "";
 
-  const supabase = createClient();
-  const avatarUrl = avatarPath
-    ? supabase.storage.from("avatars").getPublicUrl(avatarPath).data.publicUrl
-    : null;
+  const avatarUrl = user.user_metadata?.avatar_url || null;
 
   if (avatarUrl && !imgError) {
     return (

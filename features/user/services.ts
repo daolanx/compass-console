@@ -9,6 +9,16 @@ export async function getCurrentUser(): Promise<ServiceResponse<User>> {
     const supabase = createClient()
     const { data: { user }, error } = await supabase.auth.getUser()
     if (error) throw error
+
+    if (user?.user_metadata?.avatar_path) {
+      const { data } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(user.user_metadata.avatar_path)
+      if (data?.publicUrl) {
+        user.user_metadata.avatar_url = data.publicUrl
+      }
+    }
+
     return { success: true, data: user, message: "" }
   } catch (error) {
     return { success: false, data: null, message: error instanceof Error ? error.message : "Failed to get user" }
@@ -47,16 +57,13 @@ export async function uploadAvatar(userId: string, blob: Blob): Promise<ServiceR
   }
 }
 
-export async function getAvatarSignedUrl(path: string): Promise<ServiceResponse<string>> {
+export async function signOut(): Promise<ServiceResponse<void>> {
   try {
     const supabase = createClient()
-    const { data, error } = await supabase.storage
-      .from("avatars")
-      .createSignedUrl(path, 3600)
-
+    const { error } = await supabase.auth.signOut()
     if (error) throw error
-    return { success: true, data: data?.signedUrl ?? null, message: "" }
+    return { success: true, data: null, message: "" }
   } catch (error) {
-    return { success: false, data: null, message: error instanceof Error ? error.message : "Failed to get avatar URL" }
+    return { success: false, data: null, message: error instanceof Error ? error.message : "Failed to sign out" }
   }
 }

@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { EllipsisVertical, User, LogOut, UserCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { createClient } from "@/lib/supabase/client"
+import { signOut } from "@/features/user/services"
 import { useUser } from "@/features/user/hooks/use-user"
 import { UserAvatar } from "@/components/user-avatar"
 import {
@@ -23,8 +23,7 @@ export function SidebarUser({ collapsed }: SidebarUserProps) {
   const { user } = useUser()
 
   const handleLogout = async () => {
-    const supabase = createClient()
-    await supabase.auth.signOut()
+    await signOut()
     router.push("/auth/login")
     router.refresh()
   }
@@ -34,8 +33,6 @@ export function SidebarUser({ collapsed }: SidebarUserProps) {
     user?.user_metadata?.display_name ||
     user?.email ||
     "User"
-
-  const avatarPath = user?.user_metadata?.avatar_path || null
 
   return (
     <div className="mx-2 py-2">
@@ -49,7 +46,7 @@ export function SidebarUser({ collapsed }: SidebarUserProps) {
             )}
           >
             {user ? (
-              <UserAvatar user={user} avatarPath={avatarPath} updatedAt={user.updated_at} size="sm" className="size-8" />
+              <UserAvatar user={user} updatedAt={user.updated_at} size="sm" className="size-8" />
             ) : (
               <div className="size-8 shrink-0 rounded-full bg-muted flex items-center justify-center">
                 <UserCircle className="size-5 text-muted-foreground" />

@@ -2,21 +2,20 @@
 
 import { useRef, useState } from "react";
 import { User } from "@supabase/supabase-js";
-import { createClient } from "@/lib/supabase/client";
+import { uploadAvatar } from "@/features/user/services";
 import { UserAvatar } from "@/components/user-avatar";
 import { ImageCropDialog } from "@/components/image-crop-dialog";
 import { Camera, Loader2 } from "lucide-react";
 
 interface AvatarUploadProps {
   user: User;
-  avatarPath?: string | null;
   onUpload: (path: string) => void;
 }
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_SIZE = 2 * 1024 * 1024; // 2MB
 
-export function AvatarUpload({ user, avatarPath, onUpload }: AvatarUploadProps) {
+export function AvatarUpload({ user, onUpload }: AvatarUploadProps) {
   const [cropSrc, setCropSrc] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,21 +44,10 @@ export function AvatarUpload({ user, avatarPath, onUpload }: AvatarUploadProps) 
     setCropSrc(null);
     setIsUploading(true);
 
-    const supabase = createClient();
-    const ext = "png";
-    const filePath = `${user.id}/avatar.${ext}`;
-
     try {
-      const { error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(filePath, blob, {
-          upsert: true,
-          contentType: "image/png",
-        });
-
-      if (uploadError) throw uploadError;
-
-      onUpload(filePath);
+      const response = await uploadAvatar(user.id, blob);
+      if (!response.success) throw new Error(response.message);
+      onUpload(response.data!);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
@@ -81,7 +69,7 @@ export function AvatarUpload({ user, avatarPath, onUpload }: AvatarUploadProps) 
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         ) : (
-          <UserAvatar user={user} avatarPath={avatarPath} updatedAt={user.updated_at} size="lg" />
+          <UserAvatar user={user} updatedAt={user.updated_at} size="lg" />
         )}
 
         {/* Hover overlay */}
