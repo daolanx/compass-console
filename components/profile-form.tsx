@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
-import { createClient } from "@/lib/supabase/client";
+import { useUser } from "@/lib/hooks/use-user";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -27,36 +27,29 @@ interface ProfileFormProps {
 
 export function ProfileForm({ user, onSaved }: ProfileFormProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [formKey, setFormKey] = useState(0);
+  const { updateUser, isUpdating } = useUser();
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const supabase = createClient();
 
-    setIsLoading(true);
     setError(null);
     setSuccess(null);
 
     try {
-      const { error } = await supabase.auth.updateUser({
-        data: {
-          full_name: formData.get("fullName") as string,
-          display_name: formData.get("displayName") as string,
-        },
+      await updateUser({
+        full_name: formData.get("fullName") as string,
+        display_name: formData.get("displayName") as string,
       });
-      if (error) throw error;
       setSuccess("Profile updated successfully.");
       setIsEditing(false);
       setFormKey((k) => k + 1);
       onSaved?.();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -151,20 +144,20 @@ export function ProfileForm({ user, onSaved }: ProfileFormProps) {
             {/* Actions */}
             {isEditing && (
               <div className="flex items-center gap-3 pt-1">
-                <Button type="submit" disabled={isLoading} size="sm">
-                  {isLoading ? (
+                <Button type="submit" disabled={isUpdating} size="sm">
+                  {isUpdating ? (
                     <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
                   ) : (
                     <Check className="mr-1.5 h-4 w-4" />
                   )}
-                  {isLoading ? "Saving..." : "Save Changes"}
+                  {isUpdating ? "Saving..." : "Save Changes"}
                 </Button>
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   onClick={handleCancel}
-                  disabled={isLoading}
+                  disabled={isUpdating}
                 >
                   <X className="mr-1.5 h-4" />
                   Cancel

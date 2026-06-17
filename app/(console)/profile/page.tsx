@@ -1,9 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { User } from "@supabase/supabase-js"
-import { createClient } from "@/lib/supabase/client"
+import { useUser } from "@/lib/hooks/use-user"
 import { ProfileForm } from "@/components/profile-form"
 import { AvatarUpload } from "@/components/avatar-upload"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -20,27 +19,15 @@ import {
 import Link from "next/link"
 
 export default function ProfilePage() {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
   const router = useRouter()
-
-  useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user)
-      setLoading(false)
-    })
-  }, [])
+  const { user, isLoading, updateUserAsync } = useUser()
 
   const handleAvatarChange = async (path: string) => {
-    const supabase = createClient()
-    await supabase.auth.updateUser({ data: { avatar_path: path } })
-    const { data: { user } } = await supabase.auth.getUser()
-    setUser(user)
+    await updateUserAsync({ avatar_path: path })
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex-1 w-full flex items-center justify-center py-20">
         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -132,7 +119,6 @@ export default function ProfilePage() {
               user={user}
               onSaved={() => {
                 setEditing(false)
-                createClient().auth.getUser().then(({ data: { user } }) => setUser(user))
               }}
             />
           </div>

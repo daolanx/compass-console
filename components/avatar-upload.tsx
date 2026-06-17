@@ -51,7 +51,7 @@ export function AvatarUpload({ user, avatarPath, onUpload }: AvatarUploadProps) 
 
     try {
       const { error: uploadError } = await supabase.storage
-        .from("uploads")
+        .from("avatars")
         .upload(filePath, blob, {
           upsert: true,
           contentType: "image/png",
@@ -81,7 +81,7 @@ export function AvatarUpload({ user, avatarPath, onUpload }: AvatarUploadProps) 
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         ) : (
-          <UserAvatar user={user} avatarPath={avatarPath} size="lg" />
+          <UserAvatar user={user} avatarPath={avatarPath} updatedAt={user.updated_at} size="lg" />
         )}
 
         {/* Hover overlay */}

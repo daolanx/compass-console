@@ -1,12 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { EllipsisVertical, User, LogOut, UserCircle } from "lucide-react"
-import { User as SupabaseUser } from "@supabase/supabase-js"
 import { cn } from "@/lib/utils"
 import { createClient } from "@/lib/supabase/client"
+import { useUser } from "@/lib/hooks/use-user"
 import { UserAvatar } from "@/components/user-avatar"
 import {
   DropdownMenu,
@@ -21,13 +20,7 @@ interface SidebarUserProps {
 
 export function SidebarUser({ collapsed }: SidebarUserProps) {
   const router = useRouter()
-  const [user, setUser] = useState<SupabaseUser | null>(null)
-  console.log('[user]', user);
-
-  useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => setUser(user))
-  }, [])
+  const { user } = useUser()
 
   const handleLogout = async () => {
     const supabase = createClient()
@@ -42,7 +35,6 @@ export function SidebarUser({ collapsed }: SidebarUserProps) {
     user?.email ||
     "User"
 
-  const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null
   const avatarPath = user?.user_metadata?.avatar_path || null
 
   return (
@@ -57,15 +49,7 @@ export function SidebarUser({ collapsed }: SidebarUserProps) {
             )}
           >
             {user ? (
-              avatarUrl ? (
-                <img
-                  src={avatarUrl}
-                  alt={displayName}
-                  className="size-8 shrink-0 rounded-full object-cover"
-                />
-              ) : (
-                <UserAvatar user={user} avatarPath={avatarPath} size="sm" className="size-8" />
-              )
+              <UserAvatar user={user} avatarPath={avatarPath} updatedAt={user.updated_at} size="sm" className="size-8" />
             ) : (
               <div className="size-8 shrink-0 rounded-full bg-muted flex items-center justify-center">
                 <UserCircle className="size-5 text-muted-foreground" />
