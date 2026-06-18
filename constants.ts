@@ -5,7 +5,7 @@
 // ── Auth ──────────────────────────────────────────────
 export const authConfig = {
   /** Paths that don't require authentication. */
-  publicPaths: ["/auth", "/login", "/api"],
+  publicPaths: ["/auth", "/login", "/api", "/legal"],
   /** Where to redirect unauthenticated users. */
   loginPath: "/auth/login",
 };
