@@ -116,7 +116,7 @@ export default function Home() {
             <span className="text-muted-foreground">Command Center</span>
           </h1>
           <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
-            A project management dashboard for tasks, teams, growth, and finances.
+            A workbench for small teams to manage tasks, growth, and finances.
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
             <Link
