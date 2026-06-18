@@ -8,8 +8,4 @@ export interface UpdateUserData {
   avatar_path?: string
 }
 
-export interface ServiceResponse<T> {
-  success: boolean
-  data: T | null
-  message: string
-}
+export type { ServiceResponse } from "@/features/auth/types"

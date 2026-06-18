@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/client"
-import { ServiceResponse } from "@/features/user/types"
+import { ServiceResponse } from "./types"
 import { loginSchema, signUpSchema, resetPasswordSchema, updatePasswordSchema } from "./schemas"
 
 export async function login(email: string, password: string): Promise<ServiceResponse<void>> {

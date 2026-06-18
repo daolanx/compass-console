@@ -1,42 +1,44 @@
-"use client";
+"use client"
 
-import { cn } from "@/lib/utils";
-import { resetPassword } from "@/features/auth/services";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react"
+import { resetPassword } from "../services"
+import { resetPasswordSchema, type ResetPasswordFormData } from "../schemas"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
-import { useState } from "react";
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import Link from "next/link"
 
 export function ForgotPasswordForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
 
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(resetPasswordSchema),
+    defaultValues: { email: "" },
+  })
 
-    const response = await resetPassword(email);
+  const onSubmit = handleSubmit(async (data) => {
+    setServerError(null)
+    const response = await resetPassword(data.email)
     if (response.success) {
-      setSuccess(true);
+      setSuccess(true)
     } else {
-      setError(response.message);
+      setServerError(response.message)
     }
-    setIsLoading(false);
-  };
+  })
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -63,7 +65,7 @@ export function ForgotPasswordForm({
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleForgotPassword}>
+            <form onSubmit={onSubmit}>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
@@ -71,14 +73,19 @@ export function ForgotPasswordForm({
                     id="email"
                     type="email"
                     placeholder="m@example.com"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    {...register("email")}
                   />
+                  {errors.email && (
+                    <p className="text-sm text-red-500">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Sending..." : "Send reset email"}
+                {serverError && (
+                  <p className="text-sm text-red-500">{serverError}</p>
+                )}
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? "Sending..." : "Send reset email"}
                 </Button>
               </div>
               <div className="mt-4 text-center text-sm">
@@ -95,5 +102,5 @@ export function ForgotPasswordForm({
         </Card>
       )}
     </div>
-  );
+  )
 }
