@@ -116,8 +116,7 @@ export default function Home() {
             <span className="text-muted-foreground">Command Center</span>
           </h1>
           <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
-            {siteConfig.name} is a comprehensive project management dashboard that helps you
-            track tasks, manage teams, monitor growth, and oversee finances — all in one place.
+            A project management dashboard for tasks, teams, growth, and finances.
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
             <Link
