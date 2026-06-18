@@ -14,6 +14,12 @@ export const metadata: Metadata = {
   icons: {
     icon: "/logo.webp",
   },
+  robots: {
+    index: false,
+    follow: false,
+    noarchive: true,
+    nosnippet: true,
+  },
 };
 
 const geistSans = Geist({
