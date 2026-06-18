@@ -135,6 +135,17 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Product Screenshot */}
+        <div className="mx-auto mt-16 max-w-5xl w-full">
+          <div className="rounded-xl border border-border/50 bg-white/60 backdrop-blur-sm p-2 shadow-2xl">
+            <img
+              src="/dashboard-preview.webp"
+              alt="Compass Console Dashboard"
+              className="w-full rounded-lg"
+            />
+          </div>
+        </div>
+
         {/* Features Grid */}
         <div className="mx-auto mt-20 max-w-5xl grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => (
