@@ -32,31 +32,43 @@ const features = [
     icon: LayoutDashboard,
     title: "Overview",
     description: "Get a real-time snapshot of your business with AI-powered insights and key metrics.",
+    hoverBg: "group-hover:bg-blue-100",
+    hoverText: "group-hover:text-blue-500",
   },
   {
     icon: ClipboardList,
     title: "Tasks",
     description: "Track and manage tasks with priorities, deadlines, and team assignments.",
+    hoverBg: "group-hover:bg-green-100",
+    hoverText: "group-hover:text-green-500",
   },
   {
     icon: CalendarCheck,
     title: "Activities",
     description: "Log and analyze your daily activities to optimize workflows.",
+    hoverBg: "group-hover:bg-purple-100",
+    hoverText: "group-hover:text-purple-500",
   },
   {
     icon: Users,
     title: "Members",
     description: "Manage your team, roles, and permissions in one place.",
+    hoverBg: "group-hover:bg-orange-100",
+    hoverText: "group-hover:text-orange-500",
   },
   {
     icon: TrendingUp,
     title: "Growth",
     description: "Monitor growth metrics, customer acquisition, and retention rates.",
+    hoverBg: "group-hover:bg-pink-100",
+    hoverText: "group-hover:text-pink-500",
   },
   {
     icon: DollarSign,
     title: "Finance",
     description: "Track revenue, expenses, and financial health at a glance.",
+    hoverBg: "group-hover:bg-amber-100",
+    hoverText: "group-hover:text-amber-500",
   },
 ]
 
@@ -109,14 +121,14 @@ export default function Home() {
 
       {/* Hero Section */}
       <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 py-16">
-        <div className="mx-auto max-w-3xl text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            Your Business
-            <br />
-            <span className="text-muted-foreground">Command Center</span>
+        <div className="mx-auto text-center ">
+          <h1 className="text-4xl whitespace-nowrap font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl ">
+            Business Workbench <br/> for Individuals & Small Teams
+           
           </h1>
-          <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
-            A workbench for small teams to manage tasks, growth, and finances.
+          
+          <p className="mt-6 text-2xl leading-8 text-muted-foreground max-w-2xl mx-auto">
+            Simple · Practical · Focused on Metrics & Collaboration
           </p>
           <div className="mt-10 flex items-center justify-center gap-4">
             <Link
@@ -136,12 +148,12 @@ export default function Home() {
         </div>
 
         {/* Product Screenshot */}
-        <div className="mx-auto mt-16 max-w-5xl w-full">
-          <div className="rounded-xl border border-border/50 bg-white/60 backdrop-blur-sm p-2 shadow-2xl">
+        <div className="mx-auto mt-16 max-w-5xl w-full group">
+          <div className="rounded-xl border border-border/50 bg-white/60 backdrop-blur-sm p-2 shadow-2xl overflow-hidden">
             <img
               src="/dashboard-preview.webp"
               alt="Compass Console Dashboard"
-              className="w-full rounded-lg"
+              className="w-full rounded-lg transition-transform duration-500 ease-out group-hover:scale-105"
             />
           </div>
         </div>
@@ -151,11 +163,11 @@ export default function Home() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="rounded-xl border border-border/50 bg-white/60 backdrop-blur-sm p-6 hover:bg-white/80 transition-colors"
+              className="group rounded-xl border border-border/50 bg-white/60 backdrop-blur-sm p-6 transition-all duration-300 hover:bg-white hover:shadow-md hover:border-border cursor-default"
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
-                  <feature.icon className="size-5 text-muted-foreground" />
+                <div className={`flex size-10 items-center justify-center rounded-lg bg-muted transition-colors duration-300 ${feature.hoverBg}`}>
+                  <feature.icon className={`size-5 text-muted-foreground transition-colors duration-300 ${feature.hoverText}`} />
                 </div>
                 <h3 className="font-semibold text-foreground">{feature.title}</h3>
               </div>
