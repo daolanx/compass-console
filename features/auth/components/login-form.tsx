@@ -35,7 +35,7 @@ export function LoginForm({
     setServerError(null)
     const response = await login(data.email, data.password)
     if (response.success) {
-      router.push("/protected")
+      router.push("/overview")
     } else {
       setServerError(response.message)
     }
