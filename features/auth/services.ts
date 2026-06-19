@@ -19,13 +19,13 @@ export async function login(email: string, password: string): Promise<ServiceRes
 
 export async function signUp(email: string, password: string): Promise<ServiceResponse<void>> {
   try {
-    const validated = signUpSchema.parse({ email, password })
+    const validated = loginSchema.parse({ email, password })
     const supabase = createClient()
     const { error } = await supabase.auth.signUp({
       email: validated.email,
       password: validated.password,
       options: {
-        emailRedirectTo: `${window.location.origin}/protected`,
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     })
     if (error) throw error

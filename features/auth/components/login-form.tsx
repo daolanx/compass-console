@@ -106,7 +106,7 @@ export function LoginForm({
                   </span>
                 </div>
               </div>
-              <div className="flex gap-x-2">
+              <div className="flex gap-2">
                 <Button
                   type="button"
                   variant="outline"
@@ -149,15 +149,16 @@ export function LoginForm({
                   Google
                 </Button>
               </div>
-            </div>
-            <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <Link
-                href="/auth/sign-up"
-                className="underline underline-offset-4"
-              >
-                Sign up
-              </Link>
+            
+              <p className="text-center text-sm">
+                Don&apos;t have an account?{" "}
+                <Link
+                  href="/auth/sign-up"
+                  className="underline underline-offset-4"
+                >
+                  Sign up
+                </Link>
+              </p>
             </div>
           </form>
         </CardContent>
