@@ -57,6 +57,17 @@ export async function uploadAvatar(userId: string, blob: Blob): Promise<ServiceR
   }
 }
 
+export async function updateEmail(email: string): Promise<ServiceResponse<void>> {
+  try {
+    const supabase = createClient()
+    const { error } = await supabase.auth.updateUser({ email })
+    if (error) throw error
+    return { success: true, data: null, message: "" }
+  } catch (error) {
+    return { success: false, data: null, message: error instanceof Error ? error.message : "Failed to update email" }
+  }
+}
+
 export async function signOut(): Promise<ServiceResponse<void>> {
   try {
     const supabase = createClient()

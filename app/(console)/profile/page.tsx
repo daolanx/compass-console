@@ -1,30 +1,114 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useQueryClient } from "@tanstack/react-query"
 import { useUser } from "@/features/user/hooks/use-user"
-import { ProfileForm } from "@/components/profile-form"
+import { updateUser as updateUserService, updateEmail } from "@/features/user/services"
+import { createClient } from "@/lib/supabase/client"
+import { User } from "@supabase/supabase-js"
 import { AvatarUpload } from "@/components/avatar-upload"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
-  CalendarDays,
-  Shield,
-  Mail,
-  Loader2,
-  ArrowLeft,
-  Pencil,
-} from "lucide-react"
-import Link from "next/link"
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card"
+import { Loader2, CheckCircle2, AlertCircle } from "lucide-react"
+
+const USER_QUERY_KEY = ["user"]
 
 export default function ProfilePage() {
-  const [editing, setEditing] = useState(false)
+  const [fullName, setFullName] = useState("")
+  const [displayName, setDisplayName] = useState("")
+  const [email, setEmail] = useState("")
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
   const router = useRouter()
-  const { user, isLoading, updateUserAsync } = useUser()
+  const queryClient = useQueryClient()
+  const { user, isLoading } = useUser()
+
+  // Sync form state when user loads
+  useEffect(() => {
+    if (user) {
+      setFullName(user.user_metadata?.full_name || "")
+      setDisplayName(user.user_metadata?.display_name || "")
+      setEmail(user.email || "")
+    }
+  }, [user])
+
+  const patchUser = (patch: Record<string, unknown>) => {
+    queryClient.setQueryData<User>(USER_QUERY_KEY, (old) => {
+      if (!old) return old
+      return {
+        ...old,
+        ...patch,
+        user_metadata: { ...old.user_metadata, ...patch },
+      }
+    })
+  }
 
   const handleAvatarChange = async (path: string) => {
-    await updateUserAsync({ avatar_path: path })
+    const supabase = createClient()
+    const { data } = supabase.storage.from("avatars").getPublicUrl(path)
+    patchUser({
+      avatar_path: path,
+      avatar_url: data?.publicUrl,
+      updated_at: new Date().toISOString(),
+    })
+
+    const response = await updateUserService({ avatar_path: path })
+    if (!response.success) {
+      queryClient.invalidateQueries({ queryKey: USER_QUERY_KEY })
+      throw new Error(response.message)
+    }
+  }
+
+  const handleSave = async () => {
+    setError(null)
+    setSuccess(null)
+    setSaving(true)
+
+    try {
+      // Update name & display name
+      const metadataChanged =
+        fullName !== (user?.user_metadata?.full_name || "") ||
+        displayName !== (user?.user_metadata?.display_name || "")
+
+      if (metadataChanged) {
+        patchUser({ full_name: fullName, display_name: displayName })
+        const response = await updateUserService({
+          full_name: fullName,
+          display_name: displayName,
+        })
+        if (!response.success) {
+          queryClient.invalidateQueries({ queryKey: USER_QUERY_KEY })
+          throw new Error(response.message)
+        }
+      }
+
+      // Update email if changed
+      const emailChanged = email !== (user?.email || "")
+      if (emailChanged) {
+        const response = await updateEmail(email)
+        if (!response.success) {
+          throw new Error(response.message)
+        }
+        setSuccess("Profile updated. A verification email has been sent to confirm your new email.")
+      } else {
+        setSuccess("Profile updated successfully.")
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to update profile")
+    } finally {
+      setSaving(false)
+    }
   }
 
   if (isLoading) {
@@ -40,143 +124,113 @@ export default function ProfilePage() {
     return null
   }
 
-  const displayName =
-    user.user_metadata?.full_name ||
-    user.user_metadata?.display_name ||
-    user.email ||
-    "User"
-
-  const username =
-    user.user_metadata?.display_name ||
-    user.email?.split("@")[0] ||
-    "user"
-
-  const bio = user.user_metadata?.bio || ""
-
-  const memberSince = user.created_at
-    ? new Date(user.created_at).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      })
-    : ""
-
-  const provider =
-    user.app_metadata?.provider === "github"
-      ? "GitHub"
-      : user.app_metadata?.provider === "google"
-        ? "Google"
-        : "Email"
+  const hasChanges =
+    fullName !== (user.user_metadata?.full_name || "") ||
+    displayName !== (user.user_metadata?.display_name || "") ||
+    email !== (user.email || "")
 
   return (
-    <div className="flex-1 w-full">
-      <div className="max-w-4xl mx-auto p-4 sm:p-6">
-        {/* Back */}
-        <Link
-          href="/overview"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Overview
-        </Link>
+    <div className="flex-1 w-full p-4 sm:p-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Basic Information</CardTitle>
+          <CardDescription>
+            Your public profile information
+          </CardDescription>
+        </CardHeader>
 
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
-          <div className="relative">
-            <div className="rounded-full border-4 border-background shadow-lg overflow-hidden">
-              <AvatarUpload
-                user={user}
-                onUpload={handleAvatarChange}
+        <CardContent className="flex flex-col gap-5">
+          {/* Profile Photo */}
+          <div className="flex items-center gap-4">
+            <AvatarUpload user={user} onUpload={handleAvatarChange} />
+            <div className="flex flex-col gap-0.5">
+              <p className="text-sm font-medium">Profile Photo</p>
+              <p className="text-xs text-muted-foreground">
+                JPG, PNG or GIF. Max 2MB.
+              </p>
+            </div>
+          </div>
+
+          {/* Name + Display Name */}
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-2">
+              <Label htmlFor="fullName">Name</Label>
+              <Input
+                id="fullName"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Jordan Chen"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="displayName">Display name</Label>
+              <Input
+                id="displayName"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="jordanchen"
               />
             </div>
           </div>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-foreground">{displayName}</h1>
-            <p className="text-muted-foreground">@{username}</p>
-            {bio && (
-              <p className="text-sm text-muted-foreground mt-1">{bio}</p>
-            )}
+
+          {/* Email */}
+          <div className="grid gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+            />
+            <p className="text-xs text-muted-foreground">
+              Changing your email will send a verification link to the new address.
+            </p>
           </div>
+
+          {/* Messages */}
+          {error && (
+            <div className="flex items-center gap-2 rounded-lg border border-destructive/50 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="flex items-center gap-2 rounded-lg border border-emerald-500/50 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-600 dark:text-emerald-400">
+              <CheckCircle2 className="h-4 w-4 shrink-0" />
+              {success}
+            </div>
+          )}
+        </CardContent>
+
+        <CardFooter className="justify-end gap-2">
           <Button
+            type="button"
             variant="outline"
             size="sm"
-            onClick={() => setEditing(!editing)}
+            onClick={() => {
+              setFullName(user.user_metadata?.full_name || "")
+              setDisplayName(user.user_metadata?.display_name || "")
+              setEmail(user.email || "")
+              setError(null)
+              setSuccess(null)
+            }}
+            disabled={saving}
           >
-            <Pencil className="w-4 h-4 mr-2" />
-            {editing ? "Close Editor" : "Edit Profile"}
+            Cancel
           </Button>
-        </div>
-
-        <Separator className="mb-6" />
-
-        {/* Edit Form */}
-        {editing && (
-          <div className="mb-6">
-            <ProfileForm
-              user={user}
-              onSaved={() => {
-                setEditing(false)
-              }}
-            />
-          </div>
-        )}
-
-        {/* Info Cards */}
-        <div className="grid gap-4 sm:grid-cols-2">
-          {/* Account Info */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Account Details</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3">
-              <div className="flex items-center gap-3 text-sm">
-                <Mail className="w-4 h-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Email</span>
-                <span className="ml-auto font-medium">{user.email}</span>
-              </div>
-              <Separator />
-              <div className="flex items-center gap-3 text-sm">
-                <Shield className="w-4 h-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Provider</span>
-                <span className="ml-auto font-medium">{provider}</span>
-              </div>
-              <Separator />
-              <div className="flex items-center gap-3 text-sm">
-                <CalendarDays className="w-4 h-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Joined</span>
-                <span className="ml-auto font-medium">{memberSince}</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Stats */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Quick Stats</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-3 rounded-lg bg-muted/50">
-                  <div className="text-2xl font-bold text-foreground">8</div>
-                  <div className="text-xs text-muted-foreground">Projects</div>
-                </div>
-                <div className="text-center p-3 rounded-lg bg-muted/50">
-                  <div className="text-2xl font-bold text-foreground">52</div>
-                  <div className="text-xs text-muted-foreground">Completed</div>
-                </div>
-                <div className="text-center p-3 rounded-lg bg-muted/50">
-                  <div className="text-2xl font-bold text-foreground">12</div>
-                  <div className="text-xs text-muted-foreground">In Progress</div>
-                </div>
-                <div className="text-center p-3 rounded-lg bg-muted/50">
-                  <div className="text-2xl font-bold text-foreground">24</div>
-                  <div className="text-xs text-muted-foreground">Collaborators</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+          <Button
+            type="button"
+            size="sm"
+            onClick={handleSave}
+            disabled={saving || !hasChanges}
+          >
+            {saving && <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />}
+            Save changes
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   )
 }
