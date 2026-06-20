@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { siteConfig } from "@/constants"
+import { ThemeToggle } from "@/components/theme-toggle"
 import {
   BarChart3,
   DollarSign,
@@ -30,7 +31,7 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="relative flex min-h-svh flex-col overflow-hidden bg-gradient-to-br from-orange-50/40 via-amber-50/30 to-yellow-50/40">
+    <div className="relative flex min-h-svh flex-col overflow-hidden bg-gradient-to-br from-orange-50/40 via-amber-50/30 to-yellow-50/40 dark:from-orange-950/20 dark:via-amber-950/15 dark:to-yellow-950/20">
       {/* Floating icons */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {floatingIcons.map((item, i) => (
@@ -47,7 +48,7 @@ export default function AuthLayout({
         ))}
       </div>
 
-      <header className="relative z-10 flex h-16 items-center border-b border-border/50 bg-white/60 backdrop-blur-sm px-6">
+      <header className="relative z-10 flex h-16 items-center border-b border-border/50 bg-white/60 dark:bg-card/60 backdrop-blur-sm px-6">
         <Link href="/" className="flex items-center gap-3">
           <img
             src="/logo.webp"
@@ -58,11 +59,14 @@ export default function AuthLayout({
             {siteConfig.name}
           </span>
         </Link>
+        <div className="ml-auto">
+          <ThemeToggle />
+        </div>
       </header>
       <main className="relative z-10 flex flex-1 items-center justify-center p-6">
         <div className="w-full max-w-sm">{children}</div>
       </main>
-      <footer className="relative z-10 border-t border-border/50 bg-white/60 backdrop-blur-sm px-6 py-4">
+      <footer className="relative z-10 border-t border-border/50 bg-white/60 dark:bg-card/60 backdrop-blur-sm px-6 py-4">
         <div className="flex flex-col items-center gap-3 text-sm text-muted-foreground sm:flex-row sm:justify-between">
           <p>&copy; 2025 {siteConfig.name}</p>
           <div className="flex items-center gap-4">

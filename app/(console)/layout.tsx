@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Search, Bell } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { Sidebar, SidebarToggle } from "@/components/dashboard/sidebar"
 import { MobileNav } from "@/components/dashboard/mobile-nav"
 import { Input } from "@/components/ui/input"
@@ -29,6 +30,7 @@ export default function ConsoleLayout({
               <Bell />
               <span className="absolute right-2 top-2 size-2 rounded-full border-2 border-card bg-rose-500" />
             </Button>
+            <ThemeToggle />
           </div>
         </header>
         <div className="flex-1 overflow-y-auto p-6 pb-24 md:pb-6">

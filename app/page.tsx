@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { siteConfig } from "@/constants"
+import { ThemeToggle } from "@/components/theme-toggle"
 import {
   BarChart3,
   DollarSign,
@@ -32,49 +33,49 @@ const features = [
     icon: LayoutDashboard,
     title: "Overview",
     description: "Get a real-time snapshot of your business with AI-powered insights and key metrics.",
-    hoverBg: "group-hover:bg-blue-100",
-    hoverText: "group-hover:text-blue-500",
+    hoverBg: "group-hover:bg-blue-100 dark:group-hover:bg-blue-950",
+    hoverText: "group-hover:text-blue-500 dark:group-hover:text-blue-400",
   },
   {
     icon: ClipboardList,
     title: "Tasks",
     description: "Track and manage tasks with priorities, deadlines, and team assignments.",
-    hoverBg: "group-hover:bg-green-100",
-    hoverText: "group-hover:text-green-500",
+    hoverBg: "group-hover:bg-green-100 dark:group-hover:bg-green-950",
+    hoverText: "group-hover:text-green-500 dark:group-hover:text-green-400",
   },
   {
     icon: CalendarCheck,
     title: "Activities",
     description: "Log and analyze your daily activities to optimize workflows.",
-    hoverBg: "group-hover:bg-purple-100",
-    hoverText: "group-hover:text-purple-500",
+    hoverBg: "group-hover:bg-purple-100 dark:group-hover:bg-purple-950",
+    hoverText: "group-hover:text-purple-500 dark:group-hover:text-purple-400",
   },
   {
     icon: Users,
     title: "Members",
     description: "Manage your team, roles, and permissions in one place.",
-    hoverBg: "group-hover:bg-orange-100",
-    hoverText: "group-hover:text-orange-500",
+    hoverBg: "group-hover:bg-orange-100 dark:group-hover:bg-orange-950",
+    hoverText: "group-hover:text-orange-500 dark:group-hover:text-orange-400",
   },
   {
     icon: TrendingUp,
     title: "Growth",
     description: "Monitor growth metrics, customer acquisition, and retention rates.",
-    hoverBg: "group-hover:bg-pink-100",
-    hoverText: "group-hover:text-pink-500",
+    hoverBg: "group-hover:bg-pink-100 dark:group-hover:bg-pink-950",
+    hoverText: "group-hover:text-pink-500 dark:group-hover:text-pink-400",
   },
   {
     icon: DollarSign,
     title: "Finance",
     description: "Track revenue, expenses, and financial health at a glance.",
-    hoverBg: "group-hover:bg-amber-100",
-    hoverText: "group-hover:text-amber-500",
+    hoverBg: "group-hover:bg-amber-100 dark:group-hover:bg-amber-950",
+    hoverText: "group-hover:text-amber-500 dark:group-hover:text-amber-400",
   },
 ]
 
 export default function Home() {
   return (
-    <div className="relative flex min-h-svh flex-col overflow-hidden bg-gradient-to-br from-orange-50/40 via-amber-50/30 to-yellow-50/40">
+    <div className="relative flex min-h-svh flex-col overflow-hidden bg-gradient-to-br from-orange-50/40 via-amber-50/30 to-yellow-50/40 dark:from-orange-950/20 dark:via-amber-950/15 dark:to-yellow-950/20">
       {/* Floating icons */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {floatingIcons.map((item, i) => (
@@ -92,7 +93,7 @@ export default function Home() {
       </div>
 
       {/* Header */}
-      <header className="relative z-10 flex h-16 items-center border-b border-border/50 bg-white/60 backdrop-blur-sm px-6">
+      <header className="relative z-10 flex h-16 items-center border-b border-border/50 bg-white/60 dark:bg-card/60 backdrop-blur-sm px-6">
         <Link href="/" className="flex items-center gap-3">
           <img
             src="/logo.webp"
@@ -116,6 +117,7 @@ export default function Home() {
           >
             Get Started
           </Link>
+          <ThemeToggle />
         </div>
       </header>
 
@@ -140,7 +142,7 @@ export default function Home() {
             </Link>
             <Link
               href="/auth/login"
-              className="inline-flex items-center gap-2 rounded-md border border-border bg-white/60 backdrop-blur-sm px-6 py-3 text-sm font-medium text-foreground hover:bg-white/80 transition-colors"
+              className="inline-flex items-center gap-2 rounded-md border border-border bg-white/60 dark:bg-card/60 backdrop-blur-sm px-6 py-3 text-sm font-medium text-foreground hover:bg-white/80 dark:hover:bg-card/80 transition-colors"
             >
               Sign In
             </Link>
@@ -149,7 +151,7 @@ export default function Home() {
 
         {/* Product Screenshot */}
         <div className="mx-auto mt-16 max-w-5xl w-full group">
-          <div className="rounded-xl border border-border/50 bg-white/60 backdrop-blur-sm p-2 shadow-2xl overflow-hidden">
+          <div className="rounded-xl border border-border/50 bg-white/60 dark:bg-card/60 backdrop-blur-sm p-2 shadow-2xl overflow-hidden">
             <img
               src="/dashboard-preview.webp"
               alt="Compass Console Dashboard"
@@ -163,7 +165,7 @@ export default function Home() {
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="group rounded-xl border border-border/50 bg-white/60 backdrop-blur-sm p-6 transition-all duration-300 hover:bg-white hover:shadow-md hover:border-border cursor-default"
+              className="group rounded-xl border border-border/50 bg-white/60 dark:bg-card/60 backdrop-blur-sm p-6 transition-all duration-300 hover:bg-white dark:hover:bg-card hover:shadow-md hover:border-border cursor-default"
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className={`flex size-10 items-center justify-center rounded-lg bg-muted transition-colors duration-300 ${feature.hoverBg}`}>
@@ -180,7 +182,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-border/50 bg-white/60 backdrop-blur-sm px-6 py-4">
+      <footer className="relative z-10 border-t border-border/50 bg-white/60 dark:bg-card/60 backdrop-blur-sm px-6 py-4">
         <div className="flex flex-col items-center gap-3 text-sm text-muted-foreground sm:flex-row sm:justify-between">
           <p>&copy; 2025 {siteConfig.name}</p>
           <div className="flex items-center gap-4">
